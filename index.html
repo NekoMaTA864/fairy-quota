@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairy Quota</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #070a12;
+  --panel: #0d1422;
+  --ink: #ebf4ff;
+  --muted: #9baec7;
+  --line: #283b55;
+  --signal: #6de9fd;
+  --status: #6de9fd;
+  font: 15px/1.55 "Segoe UI", "Microsoft JhengHei", sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 30px;
+  color: var(--ink); background: radial-gradient(ellipse at 20% 15%, #17233e, transparent 46%), var(--bg);
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
+.shell {
+  width: min(100%, 900px); border: 1px solid var(--line); position: relative;
+  background: var(--panel); box-shadow: 0 26px 90px #0008;
+}
+.shell::before { content: ""; position: absolute; height: 3px; width: 84px; top: -1px; left: -1px; background: var(--signal); }
+header, footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 22px; }
+header { border-bottom: 1px solid var(--line); }
+footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .83rem; flex-wrap: wrap; }
+.brand { text-transform: uppercase; letter-spacing: .19em; font: 700 .9rem Consolas, monospace; }
+.brand span { color: var(--signal); margin-right: 9px; }
+.demo { color: #ffd79b; font-size: .8rem; }
+.layout { display: grid; grid-template-columns: 36% 1fr; }
+.core-panel {
+  display: grid; align-content: center; justify-items: center; gap: 20px; padding: 32px 16px;
+  border-right: 1px solid var(--line); min-height: 338px;
+  background-image: linear-gradient(#2339544a 1px, transparent 1px), linear-gradient(90deg, #2339544a 1px, transparent 1px),
+    radial-gradient(circle at center, #283e6a, #0b111e 69%);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+.core {
+  width: 180px; background: transparent; padding: 0; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; position: relative;
+  border: 1px solid #84aaff65; box-shadow: inset 0 0 24px #638aff29;
+}
+.core::before {
+  content: ""; position: absolute; inset: 9px; border-radius: 50%;
+  border: 2px solid transparent; border-top-color: #a7bbff; border-bottom-color: var(--status);
+  animation: orbit 18s linear infinite;
+}
+.core:hover { box-shadow: inset 0 0 24px #638aff50, 0 0 22px #638aff4f; }
+.core::after { content: ""; position: absolute; inset: 25px; border-radius: 50%; border: 1px dashed #9dc2ff70; }
+.eye {
+  width: 85px; height: 63px; border-radius: 65% 16%; transform: rotate(45deg);
+  border: 1px solid #bbddff; display: grid; place-items: center;
+  background: radial-gradient(circle, #657dff 0 19%, #10213d 22% 43%, #24355d 53%, #101a2b 85%);
+  box-shadow: 0 0 30px #79a0ff80;
+}
+.eye span { width: 12px; aspect-ratio: 1; border-radius: 50%; background: var(--status); box-shadow: 0 0 18px var(--status); }
+@keyframes orbit { to { transform: rotate(360deg); } }
+.status { font-size: .86rem; letter-spacing: .08em; color: var(--status); }
+.readout { padding: 30px 28px; min-width: 0; }
+h1 { margin: 0 0 18px; font-size: 1.24rem; font-weight: 600; }
+.metric { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 3px 12px; }
+.metric + .metric { margin-top: 21px; }
+.metric strong { font: 700 1.75rem Consolas, monospace; color: var(--signal); }
+.metric.primary strong { font-size: 3rem; line-height: 1; color: var(--status); }
+.reset { color: var(--muted); font-size: .81rem; }
+.bar { grid-column: 1/-1; height: 11px; margin-block: 7px 2px; position: relative; background: #233044; }
+.bar span { display: block; height: 100%; background: var(--signal); transition: width .3s; }
+.primary .bar span { background: var(--status); }
+.bar::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(5% - 2px), var(--panel) calc(5% - 2px) 5%); }
+.controls { display: flex; gap: 7px; flex-wrap: wrap; }
+.controls button { border: 1px solid var(--line); padding: 5px 10px; background: #152034; font-size: .8rem; }
+.controls button:hover, .controls button[aria-pressed="true"] { color: var(--signal); border-color: var(--signal); }
+[data-state="low"] { --status: #ffc880; }
+[data-state="offline"] { --status: #abb0cf; }
+[data-state="offline"] .bar span { opacity: .52; }
+[data-state="offline"] .core::before { animation-play-state: paused; }
+.compact { max-width: 440px; }
+.compact .layout { grid-template-columns: 1fr; }
+.compact .core-panel, .compact .secondary { display: none; }
+.compact .readout { padding: 20px 22px; }
+@media (max-width: 600px) {
+  body { padding: 14px; }
+  .layout { grid-template-columns: 1fr; }
+  .core-panel { border-right: 0; border-bottom: 1px solid var(--line); min-height: 0; padding: 18px; gap: 9px; }
+  .core { width: 125px; }
+  .core:hover { box-shadow: inset 0 0 24px #638aff50, 0 0 22px #638aff4f; }
+.core::after { inset: 17px; }
+  .eye { width: 57px; height: 42px; }
+  .readout { padding: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { animation: none !important; transition: none !important; }
+}
+</style>
+<main class="shell" id="shell" data-state="normal">
+  <header>
+    <div class="brand"><span aria-hidden="true">◈</span>Fairy Quota</div>
+    <span class="demo">原型・示範資料</span>
+  </header>
+  <div class="layout">
+    <aside class="core-panel" aria-label="AI 核心">
+      <button type="button" class="core" id="core-button" aria-label="切換下一個示範狀態" title="切換下一個示範狀態"><span class="eye" aria-hidden="true"><span></span></span></button>
+      <div class="status" id="core-status">● 核心待命</div>
+    </aside>
+    <section class="readout" aria-labelledby="quota-heading">
+      <h1 id="quota-heading">Codex 訂閱額度</h1>
+      <div class="metric primary">
+        <span>本週剩餘</span><strong id="weekly-value">78%</strong>
+        <div class="bar" aria-hidden="true"><span id="weekly-bar" style="width: 78%"></span></div>
+        <span class="reset">示範重置時間　週五 12:00</span>
+      </div>
+      <div class="metric secondary">
+        <span>5 小時額度剩餘</span><strong id="short-value">62%</strong>
+        <div class="bar" aria-hidden="true"><span id="short-bar" style="width: 62%"></span></div>
+        <span class="reset">示範重置時間　今天 15:40</span>
+      </div>
+    </section>
+  </div>
+  <footer>
+    <span id="status-note" role="status">模擬狀態｜額度正常</span>
+    <div class="controls" aria-label="預覽控制">
+      <button type="button" data-preview="normal" aria-pressed="true">正常</button>
+      <button type="button" data-preview="low" aria-pressed="false">低額度</button>
+      <button type="button" data-preview="offline" aria-pressed="false">更新失敗</button>
+      <button type="button" id="compact" aria-pressed="false">精簡模式</button>
+    </div>
+  </footer>
+</main>
+<script>
+const shell = document.querySelector("#shell");
+const stateButtons = document.querySelectorAll("button[data-preview]");
+const compactButton = document.querySelector("#compact");
+const previews = {
+  normal: { weekly: 78, short: 62, core: "● 核心待命", note: "模擬狀態｜額度正常" },
+  low: { weekly: 12, short: 62, core: "● 額度偏低", note: "模擬狀態｜週額度僅剩 12%" },
+  offline: { core: "○ 更新失敗", note: "模擬狀態｜顯示上次讀到的數字" }
+};
+
+function showPreview(state) {
+  const preview = previews[state];
+  shell.dataset.state = state;
+  document.querySelector("#core-status").textContent = preview.core;
+  document.querySelector("#status-note").textContent = preview.note;
+  for (const button of stateButtons) {
+    button.setAttribute("aria-pressed", String(button.dataset.preview === state));
+  }
+  if (state === "offline") return;
+  for (const period of ["weekly", "short"]) {
+    const percent = preview[period] + "%";
+    document.querySelector("#" + period + "-value").textContent = percent;
+    document.querySelector("#" + period + "-bar").style.width = percent;
+  }
+}
+
+for (const button of stateButtons) {
+  button.addEventListener("click", () => showPreview(button.dataset.preview));
+}
+const previewOrder = Object.keys(previews);
+document.querySelector("#core-button").addEventListener("click", () => {
+  const nextIndex = (previewOrder.indexOf(shell.dataset.state) + 1) % previewOrder.length;
+  showPreview(previewOrder[nextIndex]);
+});
+compactButton.addEventListener("click", () => {
+  const enabled = shell.classList.toggle("compact");
+  compactButton.setAttribute("aria-pressed", String(enabled));
+});
+</script>
+</html>
