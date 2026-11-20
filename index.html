@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fairy Quota</title>
+<title>Fairy Quota · 桃香版</title>
 <style>
 :root {
   color-scheme: dark;
@@ -97,15 +97,123 @@ h1 { margin: 0 0 18px; font-size: 1.24rem; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before { animation: none !important; transition: none !important; }
 }
+:root {
+  --panel: #242922;
+  --ink: #f3f2e9;
+  --muted: #bcc3b4;
+  --line: #dce2cc29;
+  --signal: #d7e5ae;
+  --status: #d7e5ae;
+  font-size: 16px;
+}
+body {
+  background: radial-gradient(ellipse at 28% 15%, #353c32 0%, transparent 60%),
+    radial-gradient(ellipse at 90% 80%, #292e31 0%, transparent 62%), #171b18;
+}
+.shell {
+  overflow: hidden;
+  border-radius: 38px;
+  background: linear-gradient(140deg, #2f352e, #242922 78%);
+  box-shadow: 0 24px 72px #10141066;
+}
+.shell::before { display: none; }
+header, footer { padding-inline: 24px; }
+.brand { letter-spacing: .13em; }
+.demo {
+  color: #e5e7d9;
+  padding: 4px 11px;
+  border-radius: 100px;
+  background: #e5e7d911;
+}
+.layout { padding: 14px; gap: 10px; grid-template-columns: 43% minmax(0, 1fr); }
+.core-panel {
+  min-height: 352px;
+  gap: 16px;
+  padding: 24px 12px;
+  border: 1px solid var(--line);
+  border-radius: 29px;
+  background: radial-gradient(ellipse at 50% 43%, #505b48, #363f35 45%, #2a322f 85%);
+}
+.core {
+  width: clamp(146px, 25vw, 194px);
+  border-color: #e5ead13a;
+  background: repeating-radial-gradient(circle, transparent 0 13px, #dbe4c811 14px 15px),
+    radial-gradient(circle, #4e5a45, #323a30 75%);
+  box-shadow: 0 0 0 10px #e3e9c609, inset 0 0 25px #e3e9c618;
+}
+.core:hover { box-shadow: 0 0 0 10px #e3e9c612, inset 0 0 25px #e3e9c620; }
+.core::before {
+  inset: 8px;
+  border-width: 1px;
+  border-top-color: #e6e8d3a0;
+  border-bottom-color: var(--status);
+}
+.core::after { inset: 26px; border: 1px solid #dce4cf24; pointer-events: none; }
+.pick {
+  display: grid;
+  width: 47%;
+  aspect-ratio: .88;
+  place-items: center;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #f0efdf91;
+  border-radius: 49% 49% 48% 48% / 42% 42% 63% 63%;
+  transform: rotate(-13deg);
+  background: linear-gradient(145deg, #e6e5d9, #a7b09b 55%, #777f72);
+  box-shadow: 0 9px 18px #1c231b66;
+}
+.pick::before {
+  content: "";
+  width: 43%;
+  height: 24%;
+  border-block: 1px solid #4859418c;
+  background: linear-gradient(transparent 47%, #48594183 47% 53%, transparent 53%);
+}
+.pick::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  aspect-ratio: 1;
+  bottom: 21%;
+  border-radius: 50%;
+  background: var(--status);
+  box-shadow: 0 0 9px var(--status);
+}
+.status { padding: 3px 11px; border-radius: 20px; background: #20291e62; }
+.readout { padding: 22px 14px; }
+.metric {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 21px;
+  background: #dde1c707;
+}
+.metric + .metric { margin-top: 10px; }
+.metric.primary strong { font-size: 2.65rem; }
+.bar { height: 8px; overflow: hidden; border-radius: 20px; background: #151a16; }
+.bar span { border-radius: inherit; background: linear-gradient(90deg, #83917c, var(--signal)); }
+.primary .bar span { background: linear-gradient(90deg, #89978a, var(--status)); }
+.bar::after { display: none; }
+.controls button { border-radius: 99px; padding: 6px 12px; background: #dce8c012; }
+[data-state="low"] { --status: #edc394; }
+[data-state="offline"] { --status: #b5babc; }
+.compact .layout { grid-template-columns: 1fr; }
+.compact .readout { padding: 8px; }
+@media (max-width: 600px) {
+  .shell { border-radius: 28px; }
+  header, footer { padding-inline: 16px; }
+  .layout { grid-template-columns: 1fr; gap: 2px; }
+  .core-panel { min-height: 0; padding: 21px 12px; }
+  .readout { padding: 12px 0 3px; }
+}
 </style>
 <main class="shell" id="shell" data-state="normal">
   <header>
-    <div class="brand"><span aria-hidden="true">◈</span>Fairy Quota</div>
+    <div class="brand"><span aria-hidden="true">●</span>Fairy Quota</div>
     <span class="demo">原型・示範資料</span>
   </header>
   <div class="layout">
     <aside class="core-panel" aria-label="AI 核心">
-      <button type="button" class="core" id="core-button" aria-label="切換下一個示範狀態" title="切換下一個示範狀態"><span class="eye" aria-hidden="true"><span></span></span></button>
+      <button type="button" class="core" id="core-button" aria-label="切換下一個示範狀態" title="切換下一個示範狀態"><span class="pick" aria-hidden="true"></span></button>
       <div class="status" id="core-status">● 核心待命</div>
     </aside>
     <section class="readout" aria-labelledby="quota-heading">
